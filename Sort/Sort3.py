@@ -1,62 +1,30 @@
-def Metadrome(inp):
-    for i in range(0, len(inp)):
-        for j in range(i+1, len(inp)):
-            if inp[i] >= inp[j]:
-                return 0
-    return 1
+def metadrome(s):
+    return all(s[i] < s[i+1] for i in range(len(s)-1))
 
+def plaindrome(s):
+    return all(s[i] <= s[i+1] for i in range(len(s)-1))
 
-def Plaindrome(inp):
-    for i in range(0, len(inp)):
-        for j in range(i+1, len(inp)):
-            if inp[i] > inp[j]:
-                return 0
-    return 2
+def katadrome(s):
+    return all(s[i] > s[i+1] for i in range(len(s)-1))
 
+def nialpdrome(s):
+    return all(s[i] >= s[i+1] for i in range(len(s)-1))
 
-def Katadrome(inp):
-    for i in range(0, len(inp)):
-        for j in range(i+1, len(inp)):
-            if inp[i] <= inp[j]:
-                return 0
-    return 3
-
-
-def Nialpdrome(inp):
-    for i in range(0, len(inp)-1):
-        for j in range(i+1, len(inp)):
-            if inp[i] < inp[j]:
-                return 0
-    return 4
-
-
-def Repdrome(inp):
-    for i in range(0, len(inp)-1):
-        for j in range(i+1, len(inp)):
-            if inp[i] == inp[j]:
-                c = 1
-            else:
-                return 0
-    if c == 1:
-        return 5
+def repdrome(s):
+    return len(set(s)) == 1
 
 
 inp = input("Enter Input : ")
-r = Repdrome(inp)
-m = Metadrome(inp)
-p = Plaindrome(inp)
-k = Katadrome(inp)
-n = Nialpdrome(inp)
 
-if r == 5:
+if repdrome(inp):
     print("Repdrome")
-elif m == 1:
+elif metadrome(inp):
     print("Metadrome")
-elif p == 2:
+elif plaindrome(inp):
     print("Plaindrome")
-elif k == 3:
+elif katadrome(inp):
     print("Katadrome")
-elif n == 4:
+elif nialpdrome(inp):
     print("Nialpdrome")
 else:
     print("Nondrome")
