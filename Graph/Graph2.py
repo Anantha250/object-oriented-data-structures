@@ -1,39 +1,61 @@
-inp = [e.split() for e in input("Enter : ").split(',')]
-lst = []
-for i in inp:
-    u = ord(i[0]) - ord("A")
-    v = ord(i[1]) - ord("A")
-    while len(lst) < u+1 or len(lst) < v+1:
-        lst.append([])
-    
-    lst[u].append(v)
-    lst[v].append(u)
+from collections import deque
 
-for i in range(len(lst)):
-    lst[i].sort()
+raw = input("Enter : ").strip()
+pairs = [p.strip().split() for p in raw.split(",") if p.strip()]
 
-ans = []
-def dfs(u):
-    if u in ans:
-        return
-    ans.append(u)
-    for v in lst[u]:
-        if v not in ans:
-            dfs(v)
+n = 0
+edges = []
+for p in pairs:
+    if len(p) < 2:
+        continue
+    u = ord(p[0]) - ord("A")
+    v = ord(p[1]) - ord("A")
+    edges.append((u, v))
+    n = max(n, u + 1, v + 1)
 
-ans_b = []
-def bfs(start):
-    q = [start]
-    while q:
-        u = q.pop(0)
-        if u in ans_b:
+adj = [[] for _ in range(n)]
+for u, v in edges:
+    adj[u].append(v)
+    adj[v].append(u)
+
+for i in range(n):
+    adj[i].sort()
+
+dfs_order = []
+dfs_visited = [False] * n
+
+def dfs(s):
+    stack = [s]
+    while stack:
+        u = stack.pop()
+        if dfs_visited[u]:
             continue
-        ans_b.append(u)
-        for v in lst[u]:
-            q.append(v)
+        dfs_visited[u] = True
+        dfs_order.append(u)
+        for v in reversed(adj[u]):
+            if not dfs_visited[v]:
+                stack.append(v)
 
-for i in range(len(lst)):
-    dfs(i)
-    bfs(i)
-print("Depth First Traversals :", " ".join([chr(e +ord("A")) for e in ans]))
-print("Bredth First Traversals :", " ".join([chr(e +ord("A")) for e in ans_b]))
+bfs_order = []
+bfs_visited = [False] * n
+
+def bfs(s):
+    q = deque([s])
+    while q:
+        u = q.popleft()
+        if bfs_visited[u]:
+            continue
+        bfs_visited[u] = True
+        bfs_order.append(u)
+        for v in adj[u]:
+            if not bfs_visited[v]:
+                q.append(v)
+
+for i in range(n):
+    if not dfs_visited[i]:
+        dfs(i)
+    if not bfs_visited[i]:
+        bfs(i)
+
+print("Depth First Traversals :", " ".join(chr(x + ord("A")) for x in dfs_order))
+print("Bredth First Traversals :", " ".join(chr(x + ord("A")) for x in bfs_order))
