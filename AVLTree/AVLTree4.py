@@ -155,10 +155,10 @@ class Tree:
             node = stack.pop()
             result.append(node.data)
 
-            if node.left:
-                stack.append(node.left)
             if node.right:
                 stack.append(node.right)
+            if node.left:
+                stack.append(node.left)
 
         return result
 
