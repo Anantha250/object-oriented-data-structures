@@ -76,8 +76,6 @@ class BST:
         print(f"{self.count}) {'->'.join([str(e) for e in path])} = {sum([e.data for e in path])}")
         self.count += 1
 
-
-
 T = BST()
 inp = input('Enter <Create City A (BST)>/<Create conditions and deploy the army>: ').split('/')
 for k in inp[0].split():
