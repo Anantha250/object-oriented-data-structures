@@ -1,108 +1,99 @@
+from __future__ import annotations
+from dataclasses import dataclass
+from typing import Optional, List, Iterable
+
+OPS = set("+-*/")
+
+
+@dataclass
 class Node:
-    def __init__(self, data,left = None,right = None):
-        self.data = data
-        self.left = left
-        self.right = right
-        
-    def __str__(self):
+    data: str
+    left: Optional["Node"] = None
+    right: Optional["Node"] = None
+
+    def __str__(self) -> str:
         return str(self.data)
-    
-class binarySearchTree:
-    def __init__(self):
-        self.root = None
-        
-    def insert(self,data):
-        if self.root == None:
-            self.root = Node(data)
-        else :
-            inTree = 0
-            temp = self.root
-            while(not inTree):
-                if temp.data <= data:
-                    if temp.right == None:
-                        temp.right = Node(data)
-                        break
-                    else :
-                        temp = temp.right
-                elif temp.data > data:
-                    if temp.left == None:
-                        temp.left = Node(data)
-                        break
-                    else :
-                        temp = temp.left
-        return self.root 
-           
-    def printTree(self, node, level = 0):
-        if node != None:
-            self.printTree(node.right, level + 1)
-            print('     ' * level, node)
-            self.printTree(node.left, level + 1)
-            
-def postToPre(postExp):
-    s = []
-    for i in range(len(postExp)):
-        if (postExp[i]in "+-*/"):
-            Op1 = s[-1]
-            s.pop()
-            Op2 = s[-1]
-            s.pop()
-            temp = postExp[i] + Op2 + Op1
-            s.append(temp)
-        else:
-            s.append(postExp[i]) 
-    answer = ""
-    for i in s:
-        answer += i
-    return answer
 
-def postToIn(postExp):
-    s = []
-    for i in range(len(postExp)):
-        if (postExp[i]in"+-*/"):
-            Op1 = s[-1]
-            s.pop()
-            Op2 = s[-1]
-            s.pop()
-            temp = '(' + Op2 + postExp[i] + Op1 + ')'
-            s.append(temp)
-        else:
-            s.append(postExp[i])    
-    answer = ""
-    for i in s:
-        answer += i
-    return answer
 
-class stack():
-    def __init__(self):
-        self.s = []
-        
-    def push(self,data):
-        self.s.append(data)
-        
-    def isEmpty(self):
-        return len(self.s)==0
-    
-    def peek(self):
-        if not self.isEmpty():
-            return self.s[-1]
-        
-    def pop(self):
-        if not self.isEmpty():
-            return self.s.pop()
-        
-BST = binarySearchTree()
-ST = stack()
-inp = input('Enter Postfix : ')
-for i in inp:
-    if i in '+-*/':
-        r = ST.pop()
-        l = ST.pop()
-        ST.push(Node(i,l,r))
-    else :
-        ST.push(Node(i))
-print("Tree :")
-BST.root = ST.pop()
-BST.printTree(BST.root)
-print('--------------------------------------------------')
-print("Infix :", postToIn(inp))
-print("Prefix :",postToPre(inp))
+class Stack:
+    def __init__(self) -> None:
+        self._s: List[Node] = []
+
+    def push(self, item: Node) -> None:
+        self._s.append(item)
+
+    def pop(self) -> Node:
+        if not self._s:
+            raise ValueError("Invalid postfix: stack underflow")
+        return self._s.pop()
+
+    def __len__(self) -> int:
+        return len(self._s)
+
+
+def tokenize_postfix(expr: str) -> List[str]:
+    expr = expr.strip()
+    if not expr:
+        return []
+    if " " in expr:
+        return expr.split()
+    return list(expr)
+
+
+def build_expr_tree(postfix_tokens: List[str]) -> Node:
+    st = Stack()
+    for tok in postfix_tokens:
+        if tok in OPS:
+            r = st.pop()
+            l = st.pop()
+            st.push(Node(tok, l, r))
+        else:
+            st.push(Node(tok))
+
+    if len(st) != 1:
+        raise ValueError("Invalid postfix: leftover operands/operators")
+    return st.pop()
+
+
+def to_infix(node: Node) -> str:
+    if node.data not in OPS:
+        return node.data
+    return f"({to_infix(node.left)}{node.data}{to_infix(node.right)})"
+
+
+def to_prefix(node: Node) -> str:
+    if node.data not in OPS:
+        return node.data
+    return f"{node.data}{to_prefix(node.left)}{to_prefix(node.right)}"
+
+
+def print_tree(node: Optional[Node], level: int = 0) -> None:
+    if node is None:
+        return
+    print_tree(node.right, level + 1)
+    print("     " * level + str(node))
+    print_tree(node.left, level + 1)
+
+
+def main() -> None:
+    inp = input("Enter Postfix : ")
+    tokens = tokenize_postfix(inp)
+    if not tokens:
+        print("Tree :")
+        print("(empty)")
+        print("-" * 50)
+        print("Infix :")
+        print("Prefix :")
+        return
+
+    root = build_expr_tree(tokens)
+
+    print("Tree :")
+    print_tree(root)
+    print("-" * 50)
+
+    infix = to_infix(root)
+    prefix = to_prefix(root)
+
+    print("Infix :", infix)
+    print("Prefix :", prefix)
