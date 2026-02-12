@@ -1,65 +1,56 @@
-def find_subset(lst, s):
-    subset = [[]]
-    for num in lst:
-        new_subset = [sub+[num] for sub in subset]
-        subset.extend(new_subset)
+def find_subset(lst, target):
+    subsets = [[]]
+    for x in lst:
+        new = []
+        for s in subsets:
+            new.append(s + [x])
+        subsets += new
 
-    subset = find_ans(subset, s)
-    subset = subset_sort(subset)
-    if not subset:
+    ans = []
+    for s in subsets:
+        if sum(s) == target:
+            ans.append(bubble(s))
+
+    ans = subset_sort(ans)
+
+    if not ans:
         print("No Subset")
     else:
-        for i in subset:
-            print(i)
+        for s in ans:
+            print(s)
+
 
 def bubble(inp):
-    for i in range(len(inp)):
-        swapped = False
-        for j in range(len(inp)-i-1):
-            if inp[j] > inp[j+1]:
-                swapped = True
-                inp[j], inp[j+1] = inp[j+1], inp[j]
-        
-        if not swapped:
-            break
-    return inp
+    a = inp[:]
+    for i in range(len(a)):
+        for j in range(len(a) - i - 1):
+            if a[j] > a[j + 1]:
+                a[j], a[j + 1] = a[j + 1], a[j]
+    return a
 
-def find_ans(subsets, num):
-    ans = []
-    for subset in subsets:
-        if sum(subset) == num:
-            ans.append(subset)
-    return ans
 
 def subset_sort(inp):
     for i in range(len(inp)):
-        inp[i] = bubble(inp[i])
-
-
-    for i in range(len(inp)):
-        swapped = False
-        for j in range(len(inp)-i-1):
-            if compare(inp[j], inp[j+1]):
-                swapped = True
-                inp[j], inp[j+1] = inp[j+1], inp[j]
-        if not swapped:
-            break
+        for j in range(len(inp) - i - 1):
+            if compare(inp[j], inp[j + 1]):
+                inp[j], inp[j + 1] = inp[j + 1], inp[j]
     return inp
 
-def compare(lst1, lst2):
-    if len(lst1) > len(lst2):
+
+def compare(a, b):
+    if len(a) > len(b):
         return True
-    if len(lst1) == len(lst2):
-        for i in range(len(lst1)):
-            if lst1[i] > lst2[i]:
-                return True
-            if lst1[i] < lst2[i]:
-                return False
+    if len(a) < len(b):
+        return False
+    for i in range(len(a)):
+        if a[i] > b[i]:
+            return True
+        if a[i] < b[i]:
+            return False
     return False
 
-num, inp = input('Enter Input : ').split('/')
+
+num, data = input("Enter Input : ").split("/")
 num = int(num)
-inp = [int(e) for e in inp.split()]
-find_subset(inp, num)
-
-
+data = list(map(int, data.split()))
+find_subset(data, num)
