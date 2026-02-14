@@ -88,6 +88,3 @@ def main():
         h.insert(int(x))
         print(h)
 
-
-if __name__ == "__main__":
-    main()
