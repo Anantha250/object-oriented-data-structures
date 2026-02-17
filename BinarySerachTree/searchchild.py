@@ -13,41 +13,41 @@ class BST:
         self.root = None
 
     def insert(self, data):
-        if self.root is None:
-            self.root = Node(data)
-            return self.root
-
-        cur = self.root
-        while True:
-            if data < cur.data:
-                if cur.left is None:
-                    cur.left = Node(data)
-                    break
-                cur = cur.left
-            else:
-                if cur.right is None:
-                    cur.right = Node(data)
-                    break
-                cur = cur.right
+        self.root = self._insert(self.root, data)
         return self.root
 
+    def _insert(self, node, data):
+        if node is None:
+            return Node(data)
+        if data < node.data:
+            node.left = self._insert(node.left, data)
+        else:
+            node.right = self._insert(node.right, data)
+        return node
+
     def search_val(self, val):
-        cur = self.root
-        while cur:
-            if val == cur.data:
-                return cur
-            cur = cur.left if val < cur.data else cur.right
-        return None
+        return self._search(self.root, val)
+
+    def _search(self, node, val):
+        if node is None or node.data == val:
+            return node
+        if val < node.data:
+            return self._search(node.left, val)
+        return self._search(node.right, val)
 
     def search_child(self, node):
         if node is None:
             return []
-        return [node.data] + self.search_child(node.left) + self.search_child(node.right)
+        return (
+            [node.data]
+            + self.search_child(node.left)
+            + self.search_child(node.right)
+        )
 
     def printTree(self, node, level=0):
         if node:
             self.printTree(node.right, level + 1)
-            print("     " * level, node)
+            print("     " * level + str(node))
             self.printTree(node.left, level + 1)
 
 
