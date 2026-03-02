@@ -1,22 +1,15 @@
-inp = [int(e) for e in input("Enter list  of numbers: ").split()]
-st = set(inp)
-num = []
+inp = list(map(int, input("Enter list of numbers: ").split()))
 
-for i in st:
-    found = inp.count(i)
-    find = inp.index(i)
-    num.append([i, find, found])
+freq = {}
+first_index = {}
 
+for idx, value in enumerate(inp):
+    if value not in freq:
+        freq[value] = 0
+        first_index[value] = idx
+    freq[value] += 1
 
-for i in range(len(num)):
-    swapped = False
-    for j in range(len(num)-i-1):
-        if num[j][2] < num[j+1][2] or (num[j][2] == num[j+1][2] and num[j][1] > num[j+1][1]):
-            swapped = True
-            num[j], num[j+1] = num[j+1], num[j]
-    
-    if not swapped:
-        break
+sorted_items = sorted(freq.keys(), key=lambda x: (-freq[x], first_index[x]))
 
-for i in num:
-    print(f'number {i[0]}, total: {i[2]}')
+for num in sorted_items:
+    print(f'number {num}, total: {freq[num]}')
