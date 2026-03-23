@@ -1,108 +1,86 @@
 class Node:
-    def __init__(self, data, left = None, right = None):
+    def __init__(self, data, left=None, right=None):
         self.data = data
-        self.left = None if left is None else left
-        self.right = None if right is None else right
-        self.height = self.setHeight()
-
-    def __str__(self):
-        return str(self.data)
+        self.left = left
+        self.right = right
+        self.height = 0
 
     def setHeight(self):
-        a = self.getHeight(self.left)
-        b = self.getHeight(self.right)
-        self.height = 1 + max(a,b)
-        return self.height
+        self.height = 1 + max(self.getHeight(self.left), self.getHeight(self.right))
 
     def getHeight(self, node):
-        return -1 if node == None else node.height
+        return -1 if node is None else node.height
 
-    def balanceValue(self):      
+    def balanceValue(self):
         return self.getHeight(self.right) - self.getHeight(self.left)
 
 
-
 class AVLTree:
-    def __init__(self, root = None):
-        self.root = root if root else None
+    def __init__(self):
+        self.root = None
 
     def add(self, data):
-        self.root = AVLTree._add(self.root, int(data))
+        self.root = self._add(self.root, int(data))
 
-    def _add(root, data):
-        if not root:
+    def _add(self, root, data):
+        if root is None:
             return Node(data)
-        elif data < root.data:
-            root.left = AVLTree._add(root.left, data)
-        else:
-            root.right = AVLTree._add(root.right, data)
-        root.setHeight()
-        balace = root.balanceValue()
-        
-        # Right rotate   right > left
-        if balace > 1 :
-            print("Not Balance, Rebalance!")
-            if data > root.right.data:
-                return AVLTree.rotateLeft(root)
-            else:
-                root.right = AVLTree.rotateRight(root.right)
-                return AVLTree.rotateLeft(root)
 
-        # Left rotate  left > right
-        if balace < -1 :
-            print("Not Balance Rebalance!")
-            if data < root.left.data:
-                return AVLTree.rotateRight(root)
+        if data < root.data:
+            root.left = self._add(root.left, data)
+        else:
+            root.right = self._add(root.right, data)
+
+        root.setHeight()
+        balance = root.balanceValue()
+
+        if balance > 1:
+            if data > root.right.data:
+                return self.rotateLeft(root)
             else:
-                root.left = AVLTree.rotateLeft(root.left)
-                return AVLTree.rotateRight(root)
-        
+                root.right = self.rotateRight(root.right)
+                return self.rotateLeft(root)
+
+        if balance < -1:
+            if data < root.left.data:
+                return self.rotateRight(root)
+            else:
+                root.left = self.rotateLeft(root.left)
+                return self.rotateRight(root)
+
         return root
 
-    def rotateLeft(x) :
+    def rotateLeft(self, x):
         y = x.right
-        if y == None:
-            return x
         x.right = y.left
         y.left = x
         x.setHeight()
         y.setHeight()
         return y
 
-    def rotateRight(x) :
+    def rotateRight(self, x):
         y = x.left
-        if y == None:
-            return x
         x.left = y.right
         y.right = x
         x.setHeight()
         y.setHeight()
         return y
 
-
-    def postOrder(self):
-        AVLTree._postOrder(self.root)
-
-    def _postOrder(node):
-        if not node is None:
-            AVLTree._postOrder(node.left)
-            AVLTree._postOrder(node.right)
-            print(node.data, end=" ")
-
     def printTree(self):
-        AVLTree._printTree(self.root)
+        self._printTree(self.root)
 
-    def _printTree(node , level=0):
-        if not node is None:
-            AVLTree._printTree(node.right, level + 1)
-            print('     ' * level, node.data)
-            AVLTree._printTree(node.left, level + 1)
+    def _printTree(self, node, level=0):
+        if node:
+            self._printTree(node.right, level + 1)
+            print("     " * level + str(node.data))
+            self._printTree(node.left, level + 1)
 
 
-myTree = AVLTree() 
+myTree = AVLTree()
 data = input("Enter Input : ").split()
+
 for e in data:
-    print("insert :",e)
-    root = myTree.add(e)
+    print("insert :", e)
+    myTree.add(e)
     myTree.printTree()
     print("===============")
