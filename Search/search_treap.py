@@ -99,6 +99,7 @@ def count_leq(t, x):
 def count_range(t, l, r):
     return count_leq(t, r) - count_leq(t, l - 1)
 
+
 def median(t):
     if not t:
         return None
