@@ -130,7 +130,6 @@ class AVLTree:
             print("     " * level, root.key)
             self.print_tree(root.left, level + 1)
 
-
 if __name__ == "__main__":
     tree = AVLTree()
     root = None
