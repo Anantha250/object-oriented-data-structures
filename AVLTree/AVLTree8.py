@@ -5,7 +5,6 @@ class Node:
         self.right = None
         self.height = 1
 
-
 class AVLTree:
     def __init__(self):
         self.root = None
