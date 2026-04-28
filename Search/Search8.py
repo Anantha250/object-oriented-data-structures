@@ -23,4 +23,5 @@ def a_star(graph, start, goal, h):
                 f = new_g + h(neighbor)
                 heapq.heappush(open_set, (f, neighbor))
                 parent[neighbor] = node
+                
     return None
